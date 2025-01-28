@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct iShnak_Watch_AppApp: App {
+    @StateObject private var model = Model()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(model)
         }
     }
 }

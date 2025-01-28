@@ -8,17 +8,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var model: Model
+    // check to see if this is needed for nav.
+    @State var tabSelected: Int = 0
+    //
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        TabView(selection: $tabSelected) {
+            DailyView()
+                .tag(0)
+            // water drink view
+            Water()
+                .tag(1)
+            Meal()
+                .tag(2)
+            Coffee()
+                .tag(3)
+            Snacks()
+                .tag(4)
+            
+        }.tabViewStyle(.verticalPage(transitionStyle: .blur))
     }
 }
 
+// Pulse animation
+
+
 #Preview {
     ContentView()
+        .environmentObject(Model())
 }
