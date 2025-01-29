@@ -23,17 +23,17 @@ struct Meal: View {
     var body: some View {
         ZStack {
             // Activity Ring
-            ActivityRingView(progress: model.meals, ringColour: .brown, lineWidth: 22)
+            ActivityRingView(progress: model.userData.meals, ringColour: .brown, lineWidth: 22)
                 .frame(width: 180)
 
             // Central Circle
             Circle()
                 .frame(width: 120)
-                .foregroundStyle(colour)
+                .foregroundStyle(colour.gradient)
                 .opacity(ontap ? 0.5 : 1)
 
             // Central Icon
-            Image(systemName: (model.meals >= 0.9) ? "repeat.circle" : "fork.knife.circle.fill")
+            Image(systemName: (model.userData.meals >= 0.9) ? "repeat.circle" : "fork.knife.circle.fill")
                 .font(.system(size: 80))
                 .foregroundStyle(.white)
                 .opacity(ontap ? 0.5 : 1)
@@ -41,16 +41,19 @@ struct Meal: View {
             // Tap Gesture Circle
             Circle()
                 .frame(width: 100)
+                .foregroundStyle(colour.gradient)
                 .opacity(0.1)
                 .onTapGesture {
                     withAnimation(.linear(duration: 0.3)) {
                         ontap.toggle()
                         showPulse = true
-                        if model.meals >= 0.9 {
-                            model.meals = 0.0
+                        if model.userData.meals >= 0.9 {
+                            model.userData.meals = 0.0
+                            model.userData.totalMeals += 0.1
                             
                         } else {
-                            model.meals += 0.35
+                            model.userData.meals += 0.35
+                            model.userData.totalMeals += 0.1
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -78,7 +81,8 @@ struct Meal: View {
 
 #Preview {
     Meal()
-        .environmentObject(Model())
+        .environmentObject(Model()) // Inject model
+        
 }
 
 

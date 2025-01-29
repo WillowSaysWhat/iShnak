@@ -17,17 +17,17 @@ struct Coffee: View {
     var body: some View {
         ZStack {
             // Activity Ring
-            ActivityRingView(progress: model.coffeeDrank, ringColour: .brown, lineWidth: 22)
+            ActivityRingView(progress: model.userData.coffeeDrank, ringColour: .brown, lineWidth: 22)
                 .frame(width: 180)
 
             // Central Circle
             Circle()
                 .frame(width: 120)
-                .foregroundStyle(colour)
+                .foregroundStyle(colour.gradient)
                 .opacity(ontap ? 0.5 : 1)
 
             // Central Icon
-            Image(systemName: (model.coffeeDrank >= 0.9) ? "repeat.circle" : "cup.and.heat.waves.fill")
+            Image(systemName: (model.userData.coffeeDrank >= 0.9) ? "repeat.circle" : "cup.and.heat.waves.fill")
                 .font(.system(size: 70))
                 .foregroundStyle(.white)
                 .opacity(ontap ? 0.5 : 1)
@@ -36,15 +36,18 @@ struct Coffee: View {
             // Tap Gesture Circle
             Circle()
                 .frame(width: 100)
+                .foregroundStyle(colour.gradient)
                 .opacity(0.1)
                 .onTapGesture {
                     withAnimation(.linear(duration: 0.3)) {
                         ontap.toggle()
                         showPulse = true
-                        if model.coffeeDrank >= 0.9 {
-                            model.coffeeDrank = 0.0
+                        if model.userData.coffeeDrank >= 0.9 {
+                            model.userData.coffeeDrank = 0.0
+                            model.userData.totalCoffee += 0.1
                         } else {
-                            model.coffeeDrank += 0.1
+                            model.userData.coffeeDrank += 0.1
+                            model.userData.totalCoffee += 0.1
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -72,6 +75,7 @@ struct Coffee: View {
 
 #Preview {
     Coffee()
-        .environmentObject(Model())
+        .environmentObject(Model()) // Inject model
+         
 }
 

@@ -1,40 +1,95 @@
-//
-//  Model.swift
-//  iShnak Watch App
-//
-//  Created by Huw Williams on 28/01/2025.
-//
-
-import Foundation
+import SwiftData
+import SwiftUI
 
 class Model: ObservableObject {
-    // logic and swiftData
     
-    @Published var totalWaterInLitres: Double = 0.0
-    @Published var totalCoffeeInLitres: Double = 0.0
+    @Published var userData: UserData = UserData() // Store user data instance
 
-    // UI
-    @Published var Litres: Double = 0
-    @Published var waterDrank: Double = 0.0
-    @Published var coffeeDrank: Double = 0.0
-    @Published var meals: Double = 0.0
-    @Published var snacks: Double = 0.0
-    
-    @Published var totalWaterDrank: Double = 0.0
-    @Published var totalMeals: Double = 0.0
-    @Published var totalSnacks: Double = 0.0
-    @Published var totalCoffee: Double = 0.0
-    // onboarding
-    @Published var NewUser: Bool = true
-    
-    func setTotalWaterDrank() {
-        self.totalWaterDrank += self.waterDrank
+    // Fetch user data (or create if none exists)
+    //  Compute total water in litres
+    func getTotalWaterInLitres() -> String {
+         // Ensure userData exists
+        self.userData.totalWaterInLitres = (self.userData.totalWater * 10) * self.userData.Litres
+        
+        return String(self.userData.totalWaterInLitres)
     }
-    
-    func setTotalWaterInLitres()  {
-        self.totalWaterInLitres = self.totalWaterDrank * self.Litres
+    func setYesterday(yesterday: UserData) {
+        
+        let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date()) // Midnight today
+            let lastRecordedDay = calendar.startOfDay(for: userData.date)
+        
+        if lastRecordedDay < today {
+            self.userData.totalMealsYesterday = yesterday.totalMeals
+            self.userData.totalWaterYesterday = yesterday.totalWater
+            self.userData.totalSnacksYesterday = yesterday.totalSnacks
+            self.userData.totalCoffeeYesterday = yesterday.totalCoffee
+            self.userData.waterDrank = 0
+            self.userData.snacks = 0
+            self.userData.coffeeDrank = 0
+            self.userData.meals = 0
+            self.userData.date = .now
+        }
     }
+    func save() {
+        let url = URL.documentsDirectory.appending(path: "UserData")
+        
+        do {
+            let data = try JSONEncoder().encode(self.userData)
+            try data.write(to: url)
+            print("Data saved successfully")
+        } catch {
+            print("Save error: \(error)")
+        }
+    }
+
+    func load() {
+        let url = URL.documentsDirectory.appending(path: "UserData")
+        
+        
+        
+        do {
+            if FileManager.default.fileExists(atPath: url.path) {
+                let data = try Data(contentsOf: url)
+                let decodedData = try JSONDecoder().decode(UserData.self, from: data)
+                
+                // move values in object to yesterday vars.
+                self.setYesterday(yesterday: decodedData)
+                print("Data loaded successfully")
+                
+            } else {
+                print("file not found at \(url.path)")
+            }
+        } catch {
+            print("Model load error: \(error)")
+        }
+    }
+}
+
+// SwiftData Model
+
+struct UserData: Decodable, Encodable  {
+    var totalWaterInLitres: Double = 0.0
+    var totalCoffeeInLitres: Double = 0.0
     
+    var Litres: Double = 0.0
+    var waterDrank: Double = 0.0
+    var coffeeDrank: Double = 0.0
+    var meals: Double = 0.0
+    var snacks: Double = 0.0
     
+    var totalWater: Double = 0.0
+    var totalMeals: Double = 0.0
+    var totalSnacks: Double = 0.0
+    var totalCoffee: Double = 0.0
+    
+    var totalWaterYesterday: Double = 0.0
+    var totalMealsYesterday: Double = 0.0
+    var totalSnacksYesterday: Double = 0.0
+    var totalCoffeeYesterday: Double = 0.0
+    
+    var NewUser: Bool = true
+    
+    var date: Date = .now
     
 }

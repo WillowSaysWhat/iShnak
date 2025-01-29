@@ -17,17 +17,17 @@ struct Snacks: View {
     var body: some View {
         ZStack {
             // Activity Ring
-            ActivityRingView(progress: model.snacks, ringColour: colour, lineWidth: 22)
+            ActivityRingView(progress: model.userData.snacks , ringColour: colour, lineWidth: 22)
                 .frame(width: 180)
 
             // Central Circle
             Circle()
                 .frame(width: 120)
-                .foregroundStyle(colour)
+                .foregroundStyle(colour.gradient)
                 .opacity(ontap ? 0.5 : 1)
 
             // Central Icon
-            Image(systemName: (model.snacks >= 0.9) ? "repeat.circle" : "carrot")
+            Image(systemName: (model.userData.snacks >= 0.9) ? "repeat.circle" : "carrot")
                 .font(.system(size: 60))
                 .foregroundStyle(.white)
                 .offset(x: 3)
@@ -36,15 +36,18 @@ struct Snacks: View {
             // Tap Gesture Circle
             Circle()
                 .frame(width: 100)
+                .foregroundStyle(colour.gradient)
                 .opacity(0.1)
                 .onTapGesture {
                     withAnimation(.linear(duration: 0.3)) {
                         ontap.toggle()
                         showPulse = true
-                        if model.snacks >= 0.9 {
-                            model.snacks = 0.0
+                        if model.userData.snacks >= 0.9 {
+                            model.userData.snacks = 0.0
+                            model.userData.totalSnacks += 0.1
                         } else {
-                            model.snacks += 0.1
+                            model.userData.snacks += 0.1
+                            model.userData.totalSnacks += 0.1
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -71,7 +74,8 @@ struct Snacks: View {
     
 #Preview {
     Snacks()
-        .environmentObject(Model())
+        .environmentObject(Model()) // Inject model
+         
 }
 
 
