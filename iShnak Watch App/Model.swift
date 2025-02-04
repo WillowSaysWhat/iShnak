@@ -59,7 +59,8 @@ class Model: ObservableObject {
             if FileManager.default.fileExists(atPath: url.path) {
                 let data = try Data(contentsOf: url)
                 let decodedData = try JSONDecoder().decode(UserData.self, from: data)
-                
+                //sets object to retrieved data
+                userData = decodedData
                 // move values in object to yesterday vars.
                 self.setYesterday(yesterday: decodedData)
                 print("Data loaded successfully")
