@@ -11,7 +11,7 @@ struct ContentView: View {
     // UI model
     @EnvironmentObject var model: Model
     // gets the app to open on this view.
-    @State var tabSelected: Int = 1
+    @State var tabSelected: Int = 0
     // Fetch local data query (SwiftData)
     
     

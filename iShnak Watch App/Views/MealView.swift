@@ -19,11 +19,11 @@ struct Meal: View {
     
     @State private var ontap: Bool = false
     @State private var showPulse: Bool = false
-    @State private var colour: Color = .yellow
+    @State private var colour: Color = .greenish
     var body: some View {
         ZStack {
             // Activity Ring
-            ActivityRingView(progress: model.userData.meals, ringColour: .brown, lineWidth: 22)
+            ActivityRingView(progress: model.userData.meals, ringColour: colour, lineWidth: 22)
                 .frame(width: 180)
 
             // Central Circle
@@ -54,6 +54,7 @@ struct Meal: View {
                         } else {
                             model.userData.meals += 0.35
                             model.userData.totalMeals += 0.1
+                            model.save()
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

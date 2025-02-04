@@ -456,6 +456,7 @@
 				DEVELOPMENT_TEAM = 94WNU99F48;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iShnak-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = iShnak;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -486,6 +487,7 @@
 				DEVELOPMENT_TEAM = 94WNU99F48;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iShnak-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = iShnak;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;

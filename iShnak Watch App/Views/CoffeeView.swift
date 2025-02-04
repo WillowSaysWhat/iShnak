@@ -49,6 +49,7 @@ struct Coffee: View {
                             model.userData.coffeeDrank += 0.1
                             model.userData.totalCoffee += 0.1
                         }
+                        model.save()
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         withAnimation(.linear(duration: 0.3)) {

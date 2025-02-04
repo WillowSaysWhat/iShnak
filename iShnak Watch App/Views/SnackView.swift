@@ -12,7 +12,7 @@ struct Snacks: View {
     
     @State private var ontap: Bool = false
     @State private var showPulse: Bool = false
-    @State private var colour: Color = .teal
+    @State private var colour: Color = .reddish
     
     var body: some View {
         ZStack {
@@ -48,6 +48,7 @@ struct Snacks: View {
                         } else {
                             model.userData.snacks += 0.1
                             model.userData.totalSnacks += 0.1
+                            model.save()
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

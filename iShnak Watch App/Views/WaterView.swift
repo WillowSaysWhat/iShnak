@@ -47,6 +47,7 @@ struct Water: View {
                         } else {
                             model.userData.waterDrank += 0.1
                             model.userData.totalWater += 0.1
+                            model.save()
                         }
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

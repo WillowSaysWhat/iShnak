@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import UserNotifications
 
 class Model: ObservableObject {
     
@@ -24,11 +25,17 @@ class Model: ObservableObject {
             self.userData.totalWaterYesterday = yesterday.totalWater
             self.userData.totalSnacksYesterday = yesterday.totalSnacks
             self.userData.totalCoffeeYesterday = yesterday.totalCoffee
+            // everything to zero
             self.userData.waterDrank = 0
             self.userData.snacks = 0
             self.userData.coffeeDrank = 0
             self.userData.meals = 0
             self.userData.date = .now
+            
+            self.userData.totalMeals = 0
+            self.userData.totalWater = 0
+            self.userData.totalCoffee = 0
+            self.userData.totalSnacks = 0
         }
     }
     func save() {
@@ -64,6 +71,30 @@ class Model: ObservableObject {
             print("Model load error: \(error)")
         }
     }
+    func scheduleHourlyNotification(every hours: Int) {
+        let content = UNMutableNotificationContent()
+        content.title = "Hydration Reminder 💧"
+        content.body = "Time to drink water!"
+        content.sound = UNNotificationSound.default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(hours * 3600), repeats: true)
+        let request = UNNotificationRequest(identifier: "hourlyReminder", content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error.localizedDescription)")
+            } else {
+                print("Hourly notification scheduled every \(hours) hours!")
+            }
+        }
+        
+    }
+    func clearNotifications() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["hourlyReminder"])
+        print("✅ Cleared previous notifications")
+    }
+
+
 }
 
 // SwiftData Model
