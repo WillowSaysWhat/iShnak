@@ -10,17 +10,17 @@ import SwiftUI
 struct ContentView: View {
     // UI model
     @EnvironmentObject var model: Model
+    
     // gets the app to open on this view.
     @State var tabSelected: Int = 0
-    // Fetch local data query (SwiftData)
-    
-    
+        
     var body: some View {
+        // This is the vertical navigation functionality of the app.
+        // each view in the TavView is accessed by swiping up/down.
         TabView(selection: $tabSelected) {
+            
             DailyView()
                 .tag(0)
-               
-            // water drink view
             Water()
                 .tag(1)
             Meal()
@@ -33,25 +33,16 @@ struct ContentView: View {
         }
         .tabViewStyle(.verticalPage(transitionStyle: .blur))
         .onAppear {
+            // loads previous data from watch.
             withAnimation(.linear(duration: 0)) {
                 model.load()
             }
-            
         }
-        .onDisappear {
-            
-            model.save()
-            
-        }
-        
-            
-        
-        
     }
     
 }
 
-// Pulse animation
+
 
 
 #Preview {

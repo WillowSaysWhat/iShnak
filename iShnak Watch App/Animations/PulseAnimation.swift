@@ -7,16 +7,17 @@
 
 import SwiftUI
 
-// pulsing animation
+// pulsing animation that activates on each press of a progress button.
 struct Pulse: View {
-    @State private var animate = false
-    let colour: Color
+    @State private var animate = false // toggles when the animation should activate.
+    let colour: Color // each view uses a different colour.
     
+    // gets the correct colour for each view. e.g. blue for water, brown for coffee.
     init(c: Color) {
         self.colour = c
     }
     
-
+// The amination is 2 circles that grow and fade using animation to change the scale and opacity.
     var body: some View {
         ZStack {
             ForEach(0..<3) { i in

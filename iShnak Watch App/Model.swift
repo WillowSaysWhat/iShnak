@@ -2,18 +2,15 @@ import SwiftData
 import SwiftUI
 import UserNotifications
 
-class Model: ObservableObject {
-    
-    @Published var userData: UserData = UserData() // Store user data instance
+// a single Model class was used so a single Environment Object could be used thorught the app.
 
-    // Fetch user data (or create if none exists)
-    //  Compute total water in litres
-    func getTotalWaterInLitres() -> String {
-         // Ensure userData exists
-        self.userData.totalWaterInLitres = (self.userData.totalWater * 10) * self.userData.Litres
-        
-        return String(self.userData.totalWaterInLitres)
-    }
+class Model: ObservableObject {
+    // Store user data instance
+    @Published var userData: UserData = UserData()
+
+    //checks to see if it is a new day.
+    // sets today totals to yesterday totals and zeros everything else.
+    // sets today's date
     func setYesterday(yesterday: UserData) {
         
         let calendar = Calendar.current
@@ -38,11 +35,15 @@ class Model: ObservableObject {
             self.userData.totalSnacks = 0
         }
     }
+    // saves the userData to watch memory
     func save() {
+        // sets destination url
         let url = URL.documentsDirectory.appending(path: "UserData")
         
         do {
+            // encodes userData
             let data = try JSONEncoder().encode(self.userData)
+            // writes to url
             try data.write(to: url)
             print("Data saved successfully")
         } catch {
@@ -51,18 +52,19 @@ class Model: ObservableObject {
     }
 
     func load() {
+        // uses identical url as save
         let url = URL.documentsDirectory.appending(path: "UserData")
-        
-        
-        
         do {
+            // looks for recent data.
             if FileManager.default.fileExists(atPath: url.path) {
+                // if availble, gets data.
                 let data = try Data(contentsOf: url)
+                // decodes data as a UserData Object
                 let decodedData = try JSONDecoder().decode(UserData.self, from: data)
-                //sets object to retrieved data
+                //saves data in this class
                 userData = decodedData
-                // move values in object to yesterday vars.
-                self.setYesterday(yesterday: decodedData)
+                // checks whether it is a new day.
+                self.setYesterday(yesterday: userData)
                 print("Data loaded successfully")
                 
             } else {
@@ -72,15 +74,19 @@ class Model: ObservableObject {
             print("Model load error: \(error)")
         }
     }
+    // sets notifications on watch
     func scheduleHourlyNotification(every hours: Int) {
+        // creates notification object.
         let content = UNMutableNotificationContent()
+        // sets title, body and sound of the notification.
         content.title = "Hydration Reminder 💧"
         content.body = "Time to drink water!"
         content.sound = UNNotificationSound.default
-
+        // creates a trigger that takes the users choice of interval and turns it into seconds. reapeats the interval.
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(hours * 3600), repeats: true)
+        // sets notification request instructions with an identifing name "hourlyReminder"
         let request = UNNotificationRequest(identifier: "hourlyReminder", content: content, trigger: trigger)
-
+        // sets the notification in the notification center.
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("Error scheduling notification: \(error.localizedDescription)")
@@ -90,6 +96,7 @@ class Model: ObservableObject {
         }
         
     }
+    // deletes notifications with identifying name "hourlyReminders" from watch.
     func clearNotifications() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["hourlyReminder"])
         print("✅ Cleared previous notifications")
@@ -98,30 +105,32 @@ class Model: ObservableObject {
 
 }
 
-// SwiftData Model
-
+// data model
 struct UserData: Decodable, Encodable  {
+    // total water consumed in the day. future implementation.
     var totalWaterInLitres: Double = 0.0
+    // total coffee for the day. for future implementation.
     var totalCoffeeInLitres: Double = 0.0
-    
+    // user's choice of waterbottle size.
     var Litres: Double = 0.0
+    // These Doubles are used on their activity rings and reset at 0.9. this could be reset multiple times a day.
     var waterDrank: Double = 0.0
     var coffeeDrank: Double = 0.0
     var meals: Double = 0.0
     var snacks: Double = 0.0
-    
+    // totals for the day
     var totalWater: Double = 0.0
     var totalMeals: Double = 0.0
     var totalSnacks: Double = 0.0
     var totalCoffee: Double = 0.0
-    
+    // totals for yesterday.
     var totalWaterYesterday: Double = 0.0
     var totalMealsYesterday: Double = 0.0
     var totalSnacksYesterday: Double = 0.0
     var totalCoffeeYesterday: Double = 0.0
-    
+    // onboarding animations: future implementation.
     var NewUser: Bool = true
-    
+    // today's date so that data can be relocated from today to yesterday.
     var date: Date = .now
     
 }
