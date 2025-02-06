@@ -19,16 +19,16 @@ struct SettingsView: View {
     // animates the saved and removed notifications that appear when the buttons are pressed.
     @State private var savedOpacity = 0.0
     @State private var removedOpacity = 0.0
-    
+    @State var tab: Int = 0
     
     var body: some View {
         ZStack {
             // TabView lets the user navigate between the two screens
-            TabView {
+            TabView(selection: $tab) {
                 ZStack(alignment: .center) {
                     // this recrange is almost invisible. It lets the user
                     // scroll easier.
-                    RoundedRectangle(cornerRadius: 14)
+                    RoundedRectangle(cornerRadius: 2)
                         .foregroundStyle(Color.green.gradient)
                         .opacity(0.02)
                     
@@ -66,11 +66,11 @@ struct SettingsView: View {
                     .foregroundStyle(.white)
                     .offset(x: 80, y: 55)
                     
-                }
+                }.tag(0)
                 // Notification repeat picker: how often the user should be notified.
                 ZStack {
                     // another rectangle to stop deadspace when scrolling.
-                    RoundedRectangle(cornerRadius: 14)
+                    RoundedRectangle(cornerRadius: 2)
                         .foregroundStyle(Color.green.gradient)
                         .opacity(0.02)
                     // Picker
@@ -114,9 +114,9 @@ struct SettingsView: View {
                     .frame(width: 30)
                     .foregroundStyle(.white)
                     .offset(x: -80, y: 55)
-                }
+                }.tag(1)
                 
-            }.tabViewStyle(.verticalPage)
+            }
             
             
             // saved! hint overlay

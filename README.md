@@ -29,6 +29,7 @@
 ---
 
 # Activity Ring
+
 This is a circular progress ring that represents the amount of items the user has consumed. it has 2 components. They are:
 
 * Background Circle: A gray, semi transparent ring that serves as a base.
@@ -50,6 +51,7 @@ The `lineWidth` decides on the size of the donut hole.
     var lineWidth: CGFloat // width of the ring
     var backgroundColor: Color = Color.gray.opacity(0.2)
 ```
+
 The base ring is a simple `Circle()` with the stroke modifier which creates a hole in the circle, or better yet - creates a ring from a circle. the `lineCap` rounds off the ends of the ring if necessary. Here it is not, howeve it is a required argument.
 
 ```swift
@@ -74,7 +76,9 @@ the activity ring `Circle()` has more to it. It has the same attributes as the b
             .animation(.easeInOut, value: progress) // Smooth animation
 
 ```
+
 The activity ring is used on all view except the settings view.
+
 <p align="center">
 <img src="/gifs/ezgif.com-video-to-gif-converter.gif" alt="gif">
 </P>
@@ -594,8 +598,84 @@ struct DailyView: View {
 
 # Settings View
 
+The Settings view hold a second TabView that holds 2 Picker widgets. One is for the selection of the user's waterbottle size, the second is the selection of the frequency of the notifications.
 
+## Variables
+
+The variables in the settings view:
+
+* model: the model object from the parent view.
+* litreOptions: array of integers that represent the size of a water bottle e.g 100 = 100ml
+* notificaitonOptions: arry with integers that represent hours.
+* litreSelectedValue: is the current selected integer in the waterbottle Picker.
+* notificationSelectedValue: the same as above but for the notification picker.
+* savedOpacity: is the current opacity of the animated save.
+* removedOpacity: as above, but for the removed hint.
+
+## Picker
+
+This is the default picker widget available in SwiftUI. It sits in a ZStack so the text `ml` can sit next to the numbers. It moves where needed to maintain the formatting.
+
+```swift
+    Picker("BOTTLE VOLUME", selection: $litreSelectedValue) {
+        ForEach(litreOptions, id: \.self) { value in
+            Text("\(value)") // values: 100, 200,etc
+                .tag(value)
+                .font(.title)
+        }
+        .foregroundStyle(.green)
+    }
+    .foregroundStyle(.green.opacity(0.4))
+    .pickerStyle(.wheel)
+    .frame(width: 150, height: 80)
+                    
+     Text("ml") // is the text in the picker
+         .foregroundStyle(.green.opacity(0.4))
+        // moves when it reaches 1000.
+         .offset(x:litreSelectedValue == 1000 ? 53 : 42, y: 15)
+```
+
+Both pickers have a button that saves the data to the watch memory.
+The Notification Picker has a delete button for removing all notifications.
 
 # Content View
 
-# iShnak View
+Content View hold the TabView that allows for navigation between all the activity views and the daily view. The EnvironmentObject is initialised in the iShnakApp file.
+
+```swift
+struct ContentView: View {
+    // UI model
+    @EnvironmentObject var model: Model
+    
+    // gets the app to open on this view.
+    @State var tabSelected: Int = 0
+        
+    var body: some View {
+        // This is the vertical navigation functionality of the app.
+        // each view in the TavView is accessed by swiping up/down.
+        TabView(selection: $tabSelected) {
+            
+            DailyView()
+                .tag(0)
+            Water()
+                .tag(1)
+            Meal()
+                .tag(2)
+            Coffee()
+                .tag(3)
+            Snacks()
+                .tag(4)
+            
+        }
+        .tabViewStyle(.verticalPage(transitionStyle: .blur))
+        .onAppear {
+            // loads previous data from watch.
+            withAnimation(.linear(duration: 0)) {
+                model.load()
+            }
+        }
+    }
+    
+}
+```
+
