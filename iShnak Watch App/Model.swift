@@ -7,6 +7,9 @@ import UserNotifications
 class Model: ObservableObject {
     // Store user data instance
     @Published var userData: UserData = UserData()
+    init() {
+        self.requestNotificationPermission()
+    }
 
     //checks to see if it is a new day.
     // sets today totals to yesterday totals and zeros everything else.
@@ -99,7 +102,39 @@ class Model: ObservableObject {
     // deletes notifications with identifying name "hourlyReminders" from watch.
     func clearNotifications() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["hourlyReminder"])
-        print("✅ Cleared previous notifications")
+        print("Cleared previous notifications")
+    }
+    func requestNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if let error = error {
+                print("Error requesting notification permission: \(error.localizedDescription)")
+            } else {
+                print(granted ? "Notification permission granted" : "Notification permission denied")
+            }
+        }
+    }
+    func testScheduleHourlyNotification(every mins: Int) {
+        // creates notification object.
+        let content = UNMutableNotificationContent()
+        // sets title, body and sound of the notification.
+        content.title = "Hydration Reminder 💧"
+        content.body = "Time to drink water!"
+        content.sound = UNNotificationSound.default
+        // creates a trigger that takes the users choice of interval and turns it into seconds. reapeats the interval.
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(mins * 60), repeats: true)
+        // sets notification request instructions with an identifing name "hourlyReminder"
+        let request = UNNotificationRequest(identifier: "hourlyReminder", content: content, trigger: trigger)
+        // sets the notification in the notification center.
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error.localizedDescription)")
+            } else {
+                print("minutes notification scheduled every \(mins) minutes")
+            }
+        }
+        
     }
 
 

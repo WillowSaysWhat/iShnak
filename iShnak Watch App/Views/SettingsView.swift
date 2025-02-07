@@ -91,7 +91,10 @@ struct SettingsView: View {
                         .foregroundStyle(.green.opacity(0.4))
                         .offset(x: 25, y: 15)
                     // save button
-                    Button {model.scheduleHourlyNotification(every: notificationSelectedValue)
+                    Button { //model.scheduleHourlyNotification(every: notificationSelectedValue)
+                        //test notifications
+                        model.testScheduleHourlyNotification(every: notificationSelectedValue)
+                        
                         animateSaved()}
                     label: {
                         Image(systemName: "clock")
